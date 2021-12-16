@@ -8,10 +8,35 @@ Elk Stack Deployment
 
 These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the YML file may be used to install only certain pieces of it, such as Filebeat.
 
-![image](https://user-images.githubusercontent.com/89936268/146105646-33ea696e-0dad-4963-8274-67e2faa45226.png)
+- Ansible Playbook
+- Ansible Hosts
+- Ansible Configuration
+- Ansible ELK Installation and VM Configuration
+- Ansible Filebeat Playbook
+- Ansible Filebeat Config file
+- Ansible Metricbeat Playbook
+- Ansible Metricbeat Config file
 
+Download the ansible.cfg configuration file on this website https://ansible.com/ and edit or copy Ansible Configuration to your /etc/ansible directory
+
+- For ansible.cfg edit:
+cd /etc/ansible/	
+nano ansible.cfg
+CTRL + W > enter remote_user
+change `remote_user = RedAdmin
+
+Assign username and SSH Public Key for Web1, Web2, ELK Virtual Machine in Azure GUI
+
+- Web1 / Web2 / ELK Server > Reset Password > Reset SSH Public Key
+  username: RedAdmin
+  SSH Key : copy id_rsa.pub from the ansible control node in .ssh/ directory. 
+- To get the SSH Key run this command:
+  i. ~/.ssh# ssh-keygen
+ ii. ~/.ssh# cat id_rsa.pub
+ 
 This document contains the following details:
-- Description of the Topologu
+
+- Description of the Topology
 - Access Policies
 - ELK Configuration
   - Beats in Use
