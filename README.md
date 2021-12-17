@@ -133,14 +133,51 @@ These Beats allow us to collect the following information from each machine:
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
-- Copy the playbook file to /etc/ansible.
-- Update the the configuration file to include the webservers and ElkVM (private Ip address.
-- Run the playbook, and navigate to ElkVM to check that the installation worked as expected. /etc/ansible/host should include:
-- Run the playbook, and SSH into the Elk vm, then run docker ps to check that the installation worked as expected. Playbook: install_elk.yml Location: /etc/ansible/install_elk.yml Navigate to http://[your.ELK-VM.External.IP]:5601/app/kibana to confirm ELK and kibana are running. 
-- You should see the following:
-![image](https://user-images.githubusercontent.com/89936268/146253587-a70b5070-a836-4ebb-a32a-5d0e964e5575.png)
+For ELK VM Configuration:
 
-_Answer the following questions to fill in the blanks:_
+- Copy the Ansible ELK Installation and VM Configuration
+- Run the playbook using this command : ansible-playbook install-elk.yml
+
+For FILEBEAT:
+- Download Filebeat playbook usng this command:
+  - curl -L -O https://gist.githubusercontent.com/slape/5cc350109583af6cbe577bbcc0710c93/raw/eca603b72586fbe148c11f9c87bf96a63cb25760/Filebeat > /etc/ansible/files/filebeat-config.yml
+- Copy the '/etc/ansible/files/filebeat-config.yml' file to '/etc/filebeat/filebeat-playbook.yml'
+- Update the filebeat-playbook.yml file to include installer
+  - curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
+- Update the filebeat-config.yml file /etc/ansible/files# nano filebeat-config.yml
+
+output.elasticsearch:
+  #Array of hosts to connect to.
+ hosts: ["10.1.0.4:9200"]
+  username: "elastic"
+  password: "changeme” 
+
+ setup.kibana:
+  host: "10.1.0.4:5601"
+  
+- Run the playbook using this command ansible-playbook filebeat-playbook.yml and navigate to Kibana > Logs : Add log data > System logs > 5:Module Status > Check data to check that the installation worked as expected.
+
+For METRICBEAT:
+- Download Metricbeat playbook using this command:
+  - curl -L -O https://gist.githubusercontent.com/slape/58541585cc1886d2e26cd8be557ce04c/raw/0ce2c7e744c54513616966affb5e9d96f5e12f73/metricbeat > /etc/ansible/files/metricbeat-config.yml
+- Copy the /etc/ansible/files/metricbeat file to /etc/metricbeat/metricbeat-playbook.yml
+- Update the filebeat-playbook.yml file to include installer
+  - curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.6.1-amd64.deb
+- Update the metricbeat file rename to metricbeat-config.yml
+  
+  output.elasticsearch:
+  #Array of hosts to connect to.
+  hosts: ["10.1.0.4:9200"]
+    username: "elastic"
+    password: "changeme"
+
+setup.kibana:
+  host: "10.1.0.4:5601"
+  
+- Run the playbook, (ansible-playbook metricbeat-playbook.yml) and navigate to Kibana > Add Metric Data > Docker Metrics > Module Status to check that the installation worked as expected. 
+
+
+  _Answer the following questions to fill in the blanks:_
 - Which file is the playbook? The Filebeat-configuration
 - Where do you copy it? copy/etc/ansible/files/filebeat-config.yml to /etc/filebeat/filebeat.yml
 - Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?      update filebeat-config.yml -- specify which machine to install by updating the host files with ip addresses of web/elk servers and selecting which group to run on in ansible.  
@@ -155,6 +192,95 @@ Using the Playbook-filebeat-playbook.yml
 - Run the playbooks, and navigate back to the installation page on the ELk-Server GUI, click the check data on the Module Status
 - Click the verfiy incoming Data to check and see the receiving logs from the DVWA machines.
 
+How to get Filebeat installer :
+
+1. Login to Kibana > Logs : Add log data > System logs > DEB > Getting started
+2.Copy: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
+
+How to get the Metricbeat installer:
+
+1. Login to Kibana > Add Metric Data > Docker Metrics > DEB > Getting Started
+2. Copy: curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.6.1-amd64.deb
+
+- Which file is the playbook? Where do you copy it?
+  - Answer : For the ANSIBLE : We will create the my-playbook1.yml as our playbook.
+
+- See the final solution of the Ansible Playbook
+  - Answer : For FILEBEAT: We will create filbeat-playbook.yml as our playbook.
+
+- See the final solution of the Filebeat Playbook
+  - Answer: For METRICBEAT: We will create metricbeat-playbook.yml as our playbook.
+
+- Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?
+
+How to Download and Edit the Ansible Configuration file
+
+- /etc/ansible# curl -L -O https://ansible.com/  > ansible.cfg
+- /etc/ansible# nano ansible.cfg
+
+- Press CTRL + W (to search > enter remote_user then change `remote_user = sysadmin`
+Where : `RedAdmin` is the remote user that has control over ansible.
+
+How to Edit the Ansible Hosts file in this directory /etc/ansible/hosts
+#List the IP Addresses of your webservers
+#You should have at least 2 IP addresses
+
+[webservers]
+10.0.0.4 ansible_python_interpreter=/usr/bin/python3
+10.0.0.5 ansible_python_interpreter=/usr/bin/python3
+10.0.0.6 ansible_python_interpreter=/usr/bin/python3
+
+#List the IP address of your ELK server
+#There should only be one IP address
+[elk]
+10.1.0.4 ansible_python_interpreter=/usr/bin/python3
+Where: [webservers] and [elk] are the group of machines and each group has 1 or more members.
+
+How to Create the ELK Installation and VM Configuration in the /etc/ansible/ directory:
+See the final solution of the Ansible ELK Installation and VM Configuration
+
+Specify a different group of machines as well as a different remote user
+      - name: Config elk VM with Docker
+        hosts: elk
+        remote_user: RedAdmin
+        become: true
+        tasks:
+        
+Where: [elk] is the Virtual Machine hosts or the group of machine targetted for this installation and can only be done by a `sysadmin` remote_user
+
+How to Copy the raw Filebeat Module Configuration file from web to the /etc/ansible/files directory:
+- curl -L -O https://gist.githubusercontent.com/slape/5cc350109583af6cbe577bbcc0710c93/raw/eca603b72586fbe148c11f9c87bf96a63cb25760/Filebeat > /etc/ansible/files/filebeat-config.yml'
+  - Note : The filebeat-config.yml as our filebeat configuration file.
+  
+* See the final solution of the Filebeat Config file
+
+hosts: ["10.1.0.4:9200"]
+  username: "elastic"
+  password: "changeme" 
+
+setup.kibana:
+  host: "10.1.0.4:5601"
+Where: hosts: ["10.1.0.4:9200"] is the ELK VM that can install Filebeat
+
+How to Copy the raw Metricbeat Module Configuration from web to the /etc/ansible/files/ directory:
+- curl -L -O https://gist.githubusercontent.com/slape/58541585cc1886d2e26cd8be557ce04c/raw/0ce2c7e744c54513616966affb5e9d96f5e12f73/metricbeat > /etc/ansible/files/metricbeat-config.yml'
+  - Note : the metricbeat-config.yml as our metricbeat configuration file. 
+  
+* See the final solution of the Metricbeat Config file
+
+hosts: ["10.1.0.4:9200"]
+  username: "elastic"
+  password: "changeme" 
+
+setup.kibana:
+  host: "10.1.0.4:5601"
+  
+Where: hosts: ["10.1.0.4:9200"] is the ELK VM that can install Metricbeat
+
+- Which URL do you navigate to in order to check that the ELK server is running?
+  - Test Kibana on web : http://[your.ELK-VM.External.IP]:5601/app/kibana
+  - Test Kibana on localhost: sysadmin@10.1.0.4: curl localhost:5601/app/kibana
+
 
 _Specific commands the user will need to run to download the playbook, update the files, etc._
 
@@ -164,6 +290,22 @@ _Specific commands the user will need to run to download the playbook, update th
 - sudo docker attach container (name of the container)
 cd /etc/ansible/ - ansible-playbook elk.yml (configures Elk-Server and starts the Elk container on the Elk-Server) wait a couple minutes for the implementation of the Elk-Server - cd /etc/ansible/roles/ - ansible-playbook filebeat-playbook.yml (installs Filebeat and Metricbeat) - open a new web browser (http://[your.ELK-VM.External.IP]:5601/app/kibana) This will bring up the Kibana Web Portal - check the Module status for file beat and metric beat to see their data receiving.
 
+Linux Command List :
+|                  COMMAND                      |                     PURPOSE                   |
+|-----------------------------------------------|-----------------------------------------------|
+|sudo apt-get update	                          | this will update all packages                 |
+|sudo apt install docker.io                     | install docker application                    |
+|sudo service docker start                      |	start the docker application                  |
+|systemctl status docker                        |	status of the docker application              |
+|sudo docker pull cyberxsecurity/ansible        |	download the docker file                      |
+|sudo docker run -ti cyberxsecurity/ansible bash|	run and create a docker image                 |
+|sudo docker start <image-name>                 |	starts the image specified                    |
+|sudo docker ps -a                              |	list all active/inactive containers           |
+|sudo docker attach <image-name>                |	effectively sshing into the ansible           |
+|ssh-keygen                                     | create a ssh key                              |
+|ansible -m ping all                            |	check the connection of ansible containers    |
+|                                               |                                               |  
+  
 ** You will need to ensure all files are properly placed before running the ansible-playbooks.
 
 
