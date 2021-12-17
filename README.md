@@ -31,8 +31,8 @@ Assign username and SSH Public Key for Web1, Web2, ELK Virtual Machine in Azure 
   username: RedAdmin
   SSH Key : copy id_rsa.pub from the ansible control node in .ssh/ directory. 
 - To get the SSH Key run this command:
-  i. ~/.ssh# ssh-keygen
- ii. ~/.ssh# cat id_rsa.pub
+  - i. ~/.ssh# ssh-keygen
+  - ii. ~/.ssh# cat id_rsa.pub
  
 This document contains the following details:
 
