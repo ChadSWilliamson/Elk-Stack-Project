@@ -49,9 +49,6 @@ This document contains the following details:
 The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the D*mn Vulnerable Web Application.
 
 Load balancing ensures that the application will be highly efficient, in addition to restricting traffic to the network.
-
-What aspect of security do load balancers protect?
-
 Load balancers protects the system from DDoS attacks by shifting attack traffic.
 Load Balancing contributes to the Availability aspect of security in regards to the CIA Triad.
 What is the advantage of a jump box?
@@ -60,7 +57,6 @@ The advantage of a jump box is to give access to the user from a single node tha
 The advantage of a JumpBox is the orgination point for launching Administrative Tasks. This ultimately sets the JumpBox as a SAW (Secure Admin Workstation). All Administrators when conducting any Administrative Task will be required to connect to the JumpBox (SAW) before perfoming any task/assignment.
 Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the changes to the Logs and system traffic.
 
-What does Filebeat watch for?
 Filebeat watches for any information in the file system which has been changed and when it has.
 Filebeat watches for log files/locations and collects log events
 What does Metricbeat record?
@@ -177,10 +173,9 @@ setup.kibana:
 - Run the playbook, (ansible-playbook metricbeat-playbook.yml) and navigate to Kibana > Add Metric Data > Docker Metrics > Module Status to check that the installation worked as expected. 
 
 
-  _Answer the following questions to fill in the blanks:_
-- Which file is the playbook? The Filebeat-configuration
-- Where do you copy it? copy/etc/ansible/files/filebeat-config.yml to /etc/filebeat/filebeat.yml
-- Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?      update filebeat-config.yml -- specify which machine to install by updating the host files with ip addresses of web/elk servers and selecting which group to run on in ansible.  
+- Playbook file:  Filebeat-configuration
+- Where do you copy it: copy/etc/ansible/files/filebeat-config.yml to /etc/filebeat/filebeat.yml
+- Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on:  update filebeat-config.yml -- specify which machine to install by updating the host files with ip addresses of web/elk servers and selecting which group to run on in ansible.  
 - Which URL do you navigate to in order to check that the ELK server is running? http://[your.ELK-VM.External.IP]:5601/app/kibana.
 
 Using the Playbook-filebeat-playbook.yml
@@ -202,16 +197,12 @@ How to get the Metricbeat installer:
 1. Login to Kibana > Add Metric Data > Docker Metrics > DEB > Getting Started
 2. Copy: curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.6.1-amd64.deb
 
-- Which file is the playbook? Where do you copy it?
-  - Answer : For the ANSIBLE : We will create the my-playbook1.yml as our playbook.
+-  We will create the my-playbook1.yml as our playbook.
 
-- See the final solution of the Ansible Playbook
-  - Answer : For FILEBEAT: We will create filbeat-playbook.yml as our playbook.
+-  For FILEBEAT: We will create filbeat-playbook.yml as our playbook.
 
-- See the final solution of the Filebeat Playbook
-  - Answer: For METRICBEAT: We will create metricbeat-playbook.yml as our playbook.
+-  For METRICBEAT: We will create metricbeat-playbook.yml as our playbook.
 
-- Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?
 
 How to Download and Edit the Ansible Configuration file
 
